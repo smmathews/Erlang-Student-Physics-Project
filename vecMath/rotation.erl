@@ -1,5 +1,3 @@
-License for all .erl and .hrl files in this project:
-
 %%% Copyright (c) 2010 shane.m.mathews@gmail.com
 %%% 
 %%% Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,4 +17,8 @@ License for all .erl and .hrl files in this project:
 %%% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 %%% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 %%% THE SOFTWARE.
+
+-module(rotation).
+
+-compile(inline).
 

@@ -1,5 +1,3 @@
-License for all .erl and .hrl files in this project:
-
 %%% Copyright (c) 2010 shane.m.mathews@gmail.com
 %%% 
 %%% Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,3 +18,40 @@ License for all .erl and .hrl files in this project:
 %%% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 %%% THE SOFTWARE.
 
+-module(brownMesh).
+-export([load/1]).
+
+load(FileName)->
+    {ok,Bin} = file:read_file(FileName),
+    << 
+     4:32/little , 
+     "IFS" , 
+     0 , 
+     1.0:32/little-float , 
+     LenModelNameString:32/little , 
+     _ModelNameString:LenModelNameString/binary , 
+     9:32/little , 
+     "VERTICES" , 
+     0 , 
+     NumVertices:32/little , 
+     VertsAndOn/binary 
+     >> = Bin,
+    SizeVerts = 4*3*NumVertices,%4 bytes in a 32 bit float, 3 floats per vertex
+    << 
+     Vertices:SizeVerts/binary , 
+     10:32/little , 
+     "TRIANGLES" , 
+     0 , 
+     NumTriangles:32/little , 
+     IndicesAndOn/binary 
+     >> = VertsAndOn,
+    SizeIndices = 4*3*NumTriangles,%4 bytes in a 32 bit int, 3 int indices per triangle
+    << 
+     Indices:SizeIndices/binary, 
+     Tail/binary 
+     >> = IndicesAndOn,
+    Tail = <<>>,%for error checking, make sure Tail is empty
+    {
+      {uniquePositions,SizeVerts,Vertices},
+      {indices,SizeIndices,Indices}
+     }.

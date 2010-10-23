@@ -1,5 +1,3 @@
-License for all .erl and .hrl files in this project:
-
 %%% Copyright (c) 2010 shane.m.mathews@gmail.com
 %%% 
 %%% Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,3 +18,34 @@ License for all .erl and .hrl files in this project:
 %%% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 %%% THE SOFTWARE.
 
+-module(instancedModel).
+-export([start/1]).
+
+-include("eSBGE.hrl").
+-include("../physics/eBBPE.hrl").
+
+start(#instancedModelInfo{}=Input)->
+    spawn_link(fun()->
+		       loop(Input)
+	       end).
+
+loop(#instancedModelInfo{}=Input)->
+    receive
+	{setPhysicsNode,PhysicsNodePID}->
+	    loop(Input#instancedModelInfo{physicsNodePID=PhysicsNodePID});
+	{From,{getDrawInfo,TimeStamp}}=ReceivedMessage->
+	    #instancedModelInfo{physicsNodePID=PhysicsNodePID} = Input,
+	    SentMessage = {self(),{getDrawInfo,TimeStamp}},
+	    PhysicsNodePID ! SentMessage,
+	    receive
+		{PhysicsNodePID,SentMessage,#rigidBodyDrawInfo{position=Pos,orientation=Orient}}->
+		    From ! {self(),ReceivedMessage,Input#instancedModelInfo{pos=Pos,orientation=Orient}}
+	    end,
+	    loop(Input);
+	Other->
+	    error_logger:error_msg(
+	      "Error: Process ~w got unknown msg ~w~n.", 
+	      [self(), Other]),
+	    loop(Input)
+    end.
+    
