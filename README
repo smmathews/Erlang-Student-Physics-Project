@@ -20,3 +20,10 @@ License for all .erl and .hrl files in this project:
 %%% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 %%% THE SOFTWARE.
 
+.ifs files are from The Brown Mesh Set. See http://graphics.cs.brown.edu/games/brown-mesh-set/
+
+To run:
+make
+cd ebin
+erl
+phy350Proj:run().
