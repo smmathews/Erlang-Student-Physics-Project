@@ -43,14 +43,9 @@ load(FileName)->
      "TRIANGLES" , 
      0 , 
      NumTriangles:32/little , 
-     IndicesAndOn/binary 
+     Indices/binary 
      >> = VertsAndOn,
     SizeIndices = 4*3*NumTriangles,%4 bytes in a 32 bit int, 3 int indices per triangle
-    << 
-     Indices:SizeIndices/binary, 
-     Tail/binary 
-     >> = IndicesAndOn,
-    Tail = <<>>,%for error checking, make sure Tail is empty
     {
       {uniquePositions,SizeVerts,Vertices},
       {indices,SizeIndices,Indices}

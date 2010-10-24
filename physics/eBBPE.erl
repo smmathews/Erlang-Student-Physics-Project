@@ -41,25 +41,21 @@ init()->
 loop(PhysicsSceneTable) ->
     receive
 	update->
-	    %self() ! update,
 	    timer:send_after(20,self(),update),
-	    update(PhysicsSceneTable,erlang:now()),
-	    loop(PhysicsSceneTable)
+	    update(PhysicsSceneTable,erlang:now())
     after 0->
 	    receive
 		{addPhysicsScene,ScenePID}->
-		    ets:insert(PhysicsSceneTable,{ScenePID}),
-		    loop(PhysicsSceneTable);
+		    ets:insert(PhysicsSceneTable,{ScenePID});
 		update->
-		    self() ! update,
-		    loop(PhysicsSceneTable);
+		    self() ! update;
 		Other->
 		    error_logger:error_msg(
 		      "Error: Process ~w got unkown msg ~w~n.",
-		      [self(),Other]),
-		    loop(PhysicsSceneTable)
+		      [self(),Other])
 	    end
-    end.
+    end,
+    loop(PhysicsSceneTable).
 
 update(PhysicsSceneTable,TimeStamp)->
     NumMessages = sendAllUpdateMessages(ets:tab2list(PhysicsSceneTable),TimeStamp),
